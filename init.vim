@@ -144,7 +144,7 @@ Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle'] }
 Plug 'Chiel92/vim-autoformat'
 
 " Snippets
-Plug 'theniceboy/vim-snippets'
+Plug 'honza/vim-snippets'
 
 " which key
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
@@ -209,9 +209,15 @@ noremap <LEADER>va :Vista!!<CR>
 " auto format
 " ====================
 
-nnoremap \f :Autoformat<CR>
-let g:formatdef_eslint = '"SRC=eslint-temp-${RANDOM}.js; cat - >$SRC; eslint --fix $SRC >/dev/null 2>&1; cat $SRC | perl -pe \"chomp if eof\"; rm -f $SRC"'
-au BufWrite * :Autoformat
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+" au BufWrite * :Autoformat
+autocmd FileType vim let b:autoformat_autoindent=0
+" nnoremap \f :Autoformat<CR>
+nnoremap \f :Prettier<CR>
+" let g:formatdef_eslint = '"SRC=eslint-temp-${RANDOM}.js; cat - >$SRC; eslint --fix $SRC >/dev/null 2>&1; cat $SRC | perl -pe \"chomp if eof\"; rm -f $SRC"'
+
+let g:formatters_vue = ['eslint_local']
+let g:run_all_formatters_vue = 1
 
 " ====================
 " 颜色显示
@@ -292,8 +298,10 @@ let g:coc_global_extensions = [
 			\ 'coc-stylelint',
 			\ 'coc-json',
 			\ 'coc-java',
+			\ 'coc-snippets',
 			\ 'coc-html']
 
+inoremap <silent><expr> <c-space> coc#refresh()
 
 function! s:check_back_space() abort
 	let col = col('.') - 1
@@ -308,6 +316,22 @@ inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 			\: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+nnoremap <silent> <LEADER>H :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+nmap <silent> <LEADER>- <Plug>(coc-diagnostic-prev)
+nmap <silent> <LEADER>= <Plug>(coc-diagnostic-next)
+
+
 " coc-actions coc-spell-check
 function! s:cocActionsOpenFromSelected(type) abort
 	execute 'CocCommand actions.open ' . a:type
@@ -353,8 +377,10 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " ====================
 
 autocmd Filetype markdown noremap ,m :MarkdownPreview<CR>
-autocmd Filetype markdown noremap ,c :MarkdownPreviewStop<CR>
-autocmd Filetype markdown noremap ,b i****<Esc>hi
-autocmd Filetype markdown noremap ,i i**<Esc>i
+autocmd Filetype markdown inoremap ,b **** <++><Esc>F*hi
+autocmd Filetype markdown inoremap ,i ** <++><Esc>F*i
+autocmd Filetype markdown inoremap ,c ```<Enter><++><Enter>```<Enter><Esc>3kA
+autocmd FileType markdown inoremap ,p ![](<++>) <++><Esc>F[a
+autocmd FileType markdown inoremap ,a [](<++>) <++><Esc>F[a
 
 exec "nohlsearch"
