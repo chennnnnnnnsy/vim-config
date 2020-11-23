@@ -1,3 +1,18 @@
+" Author: Chensy
+" Time: 2019/09/02
+
+
+" ====================
+" Auto load for first time uses
+" ====================
+ 
+if empty(glob('~/.config/nvim/autoload/plug.vim'))
+	silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+				\ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+
 " ====================
 " system option
 " ====================
@@ -45,8 +60,8 @@ set backupdir=~/.config/nvim/tmp/backup,.
 set directory=~/.config/nvim/tmp/backup,.
 
 if has('persistent_undo')
-	set undofile
-	set undodir=~/.config/nvim/tmp/undo,.
+set undofile
+set undodir=~/.config/nvim/tmp/undo,.
 endif
 
 set colorcolumn=100
@@ -69,7 +84,7 @@ noremap ; :
 
 " save & quit
 noremap Q :q<CR>
-noremap S :w<CR>
+noremap W :w<CR>
 
 " tab action
 noremap <LEADER>to :tabo<CR>
@@ -102,12 +117,17 @@ noremap sl :set splitright<CR>:vsplit<CR>
 " 光标所在单词的搜索快捷键
 noremap <LEADER>w *
 
-
 " 系统粘贴板
 nmap P "+p
 vmap Y "+y
 
-noremap <c-[> <ESC>
+noremap <c-[> <ESC><ESC>
+
+" find and replace
+" noremap \s :%s//g<left><left>
+
+" 关闭当前buffer
+nnoremap <silent> <LEADER>BD :bp \| bd #<CR>
 
 " ====================
 " Plugs
@@ -141,10 +161,10 @@ Plug 'liuchengxu/vista.vim'
 Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle'] }
 
 " code autoformat
-Plug 'Chiel92/vim-autoformat'
 
 " Snippets
 Plug 'honza/vim-snippets'
+
 
 " which key
 Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
@@ -167,9 +187,11 @@ Plug 'wincent/terminus'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Editor
+Plug 'tpope/vim-surround' " type yskw' to wrap the word with '' or type cs'` to change 'word' to `word`
 Plug 'jiangmiao/auto-pairs'
 Plug 'gcmt/wildfire.vim' " in Visual mode, type i' to select all text in '', or type k) k] k} kp
 Plug 'tpope/vim-commentary'
+Plug 'mg979/vim-visual-multi'
 
 " markdown
 Plug 'godlygeek/tabular', { 'for': 'markdown' }
@@ -177,7 +199,6 @@ Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install', 'for': 'markdown'  }
 
 call plug#end()
-
 
 " ====================
 " statusLine
@@ -209,15 +230,6 @@ noremap <LEADER>va :Vista!!<CR>
 " auto format
 " ====================
 
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
-" au BufWrite * :Autoformat
-autocmd FileType vim let b:autoformat_autoindent=0
-" nnoremap \f :Autoformat<CR>
-nnoremap \f :Prettier<CR>
-" let g:formatdef_eslint = '"SRC=eslint-temp-${RANDOM}.js; cat - >$SRC; eslint --fix $SRC >/dev/null 2>&1; cat $SRC | perl -pe \"chomp if eof\"; rm -f $SRC"'
-
-let g:formatters_vue = ['eslint_local']
-let g:run_all_formatters_vue = 1
 
 " ====================
 " 颜色显示
@@ -285,23 +297,27 @@ set timeoutlen=500
 " ====================
 
 let g:coc_global_extensions = [
-			\ 'coc-actions',
-			\ 'coc-vimlsp',
-			\ 'coc-tailwindcss',
-			\ 'coc-spell-checker',
-			\ 'coc-highlight',
-			\ 'coc-gitignore',
-			\ 'coc-explorer',
-			\ 'coc-emmet',
-			\ 'coc-xml',
-			\ 'coc-tsserver',
-			\ 'coc-stylelint',
-			\ 'coc-json',
-			\ 'coc-java',
-			\ 'coc-snippets',
-			\ 'coc-html']
+	\ 'coc-actions',
+	\ 'coc-lists',
+	\ 'coc-vimlsp',
+	\ 'coc-spell-checker',
+	\ 'coc-highlight',
+	\ 'coc-gitignore',
+	\ 'coc-css',
+	\ 'coc-cssmodules',
+	\ 'coc-xml',
+	\ 'coc-tsserver',
+	\ 'coc-json',
+	\ 'coc-snippets',
+	\ 'coc-eslint',
+	\ 'coc-prettier',
+	\ 'coc-vetur',
+	\ 'coc-html']
 
-inoremap <silent><expr> <c-space> coc#refresh()
+" command! -nargs=0 Format :call CocAction('format')
+" nnoremap <silent> \f :Format<CR>
+
+nmap <leader>rn <Plug>(coc-rename)
 
 function! s:check_back_space() abort
 	let col = col('.') - 1
@@ -331,7 +347,6 @@ endfunction
 nmap <silent> <LEADER>- <Plug>(coc-diagnostic-prev)
 nmap <silent> <LEADER>= <Plug>(coc-diagnostic-next)
 
-
 " coc-actions coc-spell-check
 function! s:cocActionsOpenFromSelected(type) abort
 	execute 'CocCommand actions.open ' . a:type
@@ -354,17 +369,17 @@ nnoremap <silent> <LEADER>b :Buffers<CR>
 let NERDTreeShowHidden=1
 nnoremap <C-b> :NERDTreeToggle<CR>
 let g:NERDTreeGitStatusIndicatorMapCustom = {
-			\ 'Modified'  :'✹',
-			\ 'Staged'    :'✚',
-			\ 'Untracked' :'✭',
-			\ 'Renamed'   :'➜',
-			\ 'Unmerged'  :'═',
-			\ 'Deleted'   :'✖',
-			\ 'Dirty'     :'✗',
-			\ 'Ignored'   :'☒',
-			\ 'Clean'     :'✔︎',
-			\ 'Unknown'   :'?',
-			\ }
+	\ 'Modified'  :'✹',
+	\ 'Staged'    :'✚',
+	\ 'Untracked' :'✭',
+	\ 'Renamed'   :'➜',
+	\ 'Unmerged'  :'═',
+	\ 'Deleted'   :'✖',
+	\ 'Dirty'     :'✗',
+	\ 'Ignored'   :'☒',
+	\ 'Clean'     :'✔︎',
+	\ 'Unknown'   :'?',
+	\ }
 let g:NERDTreeGitStatusUseNerdFonts = 1
 let g:NERDTreeGitStatusShowIgnored = 1
 let g:NERDTreeGitStatusConcealBrackets = 1
@@ -376,11 +391,13 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " markdown
 " ====================
 
-autocmd Filetype markdown noremap ,m :MarkdownPreview<CR>
-autocmd Filetype markdown inoremap ,b **** <++><Esc>F*hi
-autocmd Filetype markdown inoremap ,i ** <++><Esc>F*i
-autocmd Filetype markdown inoremap ,c ```<Enter><++><Enter>```<Enter><Esc>3kA
-autocmd FileType markdown inoremap ,p ![](<++>) <++><Esc>F[a
-autocmd FileType markdown inoremap ,a [](<++>) <++><Esc>F[a
+autocmd Filetype markdown nnoremap ,m :MarkdownPreview<CR>
+autocmd Filetype markdown inoremap <buffer> ,f <Esc>/<++><CR>:nohlsearch<CR>"_c4l
+autocmd Filetype markdown inoremap <buffer> ,w <Esc>/ <++><CR>:nohlsearch<CR>"_c5l<CR>
+autocmd Filetype markdown inoremap <buffer> ,b **** <++><Esc>F*hi
+autocmd Filetype markdown inoremap <buffer> ,i ** <++><Esc>F*i
+autocmd Filetype markdown inoremap <buffer> ,c ```<Enter><++><Enter>```<Enter><Esc>3kA
+autocmd FileType markdown inoremap <buffer> ,p ![](<++>) <++><Esc>F[a
+autocmd FileType markdown inoremap <buffer> ,a [](<++>) <++><Esc>F[a
 
 exec "nohlsearch"
