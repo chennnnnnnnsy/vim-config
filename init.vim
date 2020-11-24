@@ -137,16 +137,19 @@ call plug#begin('~/.config/nvim/plugged')
 
 " theme
 " Plug 'ajmwagar/vim-deus'
-Plug 'rakr/vim-one'
-
-
+" Plug 'rakr/vim-one'
+" Plug 'karoliskoncevicius/sacredforest-vim'
+Plug 'cocopon/iceberg.vim'
+ 
 " 光标移动
 Plug 'rhysd/accelerated-jk'
 
 
 " status line
 " Plug 'liuchengxu/eleline.vim'
-Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline'
+Plug 'itchyny/lightline.vim'
+Plug 'itchyny/vim-gitbranch'
 
 " 颜色显示
 Plug 'RRethy/vim-illuminate'
@@ -204,10 +207,26 @@ call plug#end()
 " statusLine
 " ====================
 
-let g:airline_powerline_fonts = 0
 set guifont=Roboto\ Mono\ Medium\ for\ Powerline\ Font:h18
-let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme='one'
+
+" let g:airline_powerline_fonts = 0
+" let g:airline#extensions#tabline#enabled = 1
+" let g:airline_theme='one'
+
+set laststatus=2
+let g:lightline = {
+	\ 'colorscheme': 'iceberg',
+	\ 'active': {
+  \   'left': [ [ 'mode', 'paste' ],
+  \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
+  \   'right': [ [ 'lineinfo' ],
+	\              [ 'percent' ],
+	\              [ 'filetype' ] ]
+	\ },
+  \ 'component_function': {
+  \   'gitbranch': 'gitbranch#name'
+  \ },
+\ }
 
 " ====================
 " Vista
@@ -238,10 +257,13 @@ noremap <LEADER>va :Vista!!<CR>
 let g:Hexokinase_highlighters = ['virtual']
 set termguicolors " enable true colors support
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-colorscheme one
-set background=dark
-set t_8b=^[[48;2;%lu;%lu;%lum
-set t_8f=^[[38;2;%lu;%lu;%lum
+
+" colorscheme one
+" set background=dark
+" set t_8b=^[[48;2;%lu;%lu;%lum
+" set t_8f=^[[38;2;%lu;%lu;%lum
+" colorscheme sacredforest
+colorscheme iceberg
 
 " ====================
 " gitgutter + Agit
