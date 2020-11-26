@@ -158,10 +158,10 @@ Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' }
 " file navigation
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-" Plug 'Yggdroot/LeaderF', { 'do': './install.sh' } " 文件搜索引擎
 " Plug 'kevinhwang91/rnvimr'  " 浮窗的ranger
 Plug 'liuchengxu/vista.vim'
-Plug 'preservim/nerdtree', { 'on': ['NERDTreeToggle'] }
+Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'kristijanhusak/defx-icons'
 
 " code autoformat
 
@@ -176,7 +176,6 @@ Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
 Plug 'theniceboy/vim-gitignore', { 'for': ['gitignore', 'vim-plug'] }
 Plug 'airblade/vim-gitgutter'
 Plug 'cohama/agit.vim'
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': ['NERDTreeToggle'] }
 
 " 类似vscode 的.vscode 文件
 "Plug 'skywind3000/asynctasks.vim'
@@ -218,10 +217,11 @@ let g:lightline = {
 	\ 'colorscheme': 'iceberg',
 	\ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
-  \   'right': [ [ 'lineinfo' ],
+	\             ['gitbranch'],
+	\             [ 'filename' ] ],
+	\   'right': [ [ 'lineinfo' ],
 	\              [ 'percent' ],
-	\              [ 'filetype' ] ]
+	\              [ 'modified','filetype'] ]
 	\ },
   \ 'component_function': {
   \   'gitbranch': 'gitbranch#name'
@@ -300,14 +300,6 @@ nmap k <Plug>(accelerated_jk_gk)
 let g:accelerated_jk_acceleration_table = [2, 4, 7, 15]
 
 " ====================
-" leaderF
-" ====================
-
-" let g:Lf_WindowPosition = 'popup'
-" let g:Lf_PreviewInPopup = 1
-" let g:Lf_ShowDevIcons = 0
-
-" ====================
 " which key
 " ====================
 
@@ -377,37 +369,67 @@ xmap <silent> <leader>a :<C-u>execute 'CocCommand actions.open ' . visualmode()<
 nmap <silent> <leader>a :<C-u>set operatorfunc=<SID>cocActionsOpenFromSelected<CR>g@
 
 " ====================
-" fzf
+" files search
 " ====================
 
-nnoremap <silent> <LEADER>f :Files<CR>
-nnoremap <silent> <LEADER>b :Buffers<CR>
+nnoremap <silent> <LEADER>ff :Files<CR>
+nnoremap <silent> <LEADER>fb :Buffers<CR>
 
 " ====================
-" NERDTree
+" files tree
 " ====================
 
-" autocmd vimenter * NERDTree
-let NERDTreeShowHidden=1
-nnoremap <C-b> :NERDTreeToggle<CR>
-let g:NERDTreeGitStatusIndicatorMapCustom = {
-	\ 'Modified'  :'✹',
-	\ 'Staged'    :'✚',
-	\ 'Untracked' :'✭',
-	\ 'Renamed'   :'➜',
-	\ 'Unmerged'  :'═',
-	\ 'Deleted'   :'✖',
-	\ 'Dirty'     :'✗',
-	\ 'Ignored'   :'☒',
-	\ 'Clean'     :'✔︎',
-	\ 'Unknown'   :'?',
-	\ }
-let g:NERDTreeGitStatusUseNerdFonts = 1
-let g:NERDTreeGitStatusShowIgnored = 1
-let g:NERDTreeGitStatusConcealBrackets = 1
-let g:NERDTreeDirArrowExpandable = ''
-let g:NERDTreeDirArrowCollapsible = ''
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+autocmd FileType defx call s:defx_my_settings()
+
+function! s:defx_my_settings() abort
+	" Define mappings
+	nnoremap <silent><buffer><expr> <CR> defx#do_action('open')
+	nnoremap <silent><buffer><expr> c defx#do_action('copy')
+	nnoremap <silent><buffer><expr> m defx#do_action('move')
+	nnoremap <silent><buffer><expr> p defx#do_action('paste')
+	nnoremap <silent><buffer><expr> l defx#do_action('open')
+	nnoremap <silent><buffer><expr> E defx#do_action('open', 'vsplit')
+	nnoremap <silent><buffer><expr> P defx#do_action('preview')
+	nnoremap <silent><buffer><expr> o defx#do_action('open_tree', 'toggle')
+	nnoremap <silent><buffer><expr> K defx#do_action('new_directory')
+	nnoremap <silent><buffer><expr> N defx#do_action('new_file')
+	" nnoremap <silent><buffer><expr> M defx#do_action('new_multiple_files')
+	nnoremap <silent><buffer><expr> S defx#do_action('toggle_sort', 'time')
+	nnoremap <silent><buffer><expr> d defx#do_action('remove')
+	nnoremap <silent><buffer><expr> r defx#do_action('rename')
+	" nnoremap <silent><buffer><expr> ! defx#do_action('execute_command')
+	" nnoremap <silent><buffer><expr> x defx#do_action('execute_system')
+	nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
+	nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+	" nnoremap <silent><buffer><expr> ; defx#do_action('repeat')
+	nnoremap <silent><buffer><expr> h defx#do_action('cd', ['..'])
+	nnoremap <silent><buffer><expr> ~ defx#do_action('cd')
+	nnoremap <silent><buffer><expr> <C-[> defx#do_action('quit')
+	nnoremap <silent><buffer><expr> <Space> defx#do_action('toggle_select') . 'j'
+	nnoremap <silent><buffer><expr> * defx#do_action('toggle_select_all')
+	nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j'
+	nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k'
+	" nnoremap <silent><buffer><expr> <C-l> defx#do_action('redraw')
+	nnoremap <silent><buffer><expr> <C-g> defx#do_action('print')
+	" nnoremap <silent><buffer><expr> cd defx#do_action('change_vim_cwd')
+endfunction
+
+nnoremap <silent> <C-b> :Defx<CR>
+
+call defx#custom#option('_', {
+	\ 'show_ignored_files': 0,
+	\ 'columns': 'icons:indent:filename:type:size',
+	\ })
+	" \ 'winheight': 40,
+	" \ 'winwidth': 60,
+	" \ 'split': 'floating',
+	" \ 'direction': '',
+
+call defx#custom#column('filename', {
+	\ 'min_width': 40,
+	\ 'max_width': 40,
+	\ })
 
 " ====================
 " markdown

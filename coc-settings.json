@@ -70,6 +70,8 @@
 		"typescriptreact"
 	],
 	"cSpell.userWords": [
-		"nvim"
-	]
+    "Chensy",
+    "defx",
+    "nvim"
+  ]
 }
