@@ -200,6 +200,11 @@ Plug 'godlygeek/tabular', { 'for': 'markdown' }
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install', 'for': 'markdown'  }
 
+" React
+Plug 'HerringtonDarkholme/yats.vim'
+" or Plug 'leafgarland/typescript-vim'
+Plug 'maxmellon/vim-jsx-pretty'
+
 call plug#end()
 
 " ====================
@@ -372,6 +377,7 @@ nmap <silent> <leader>a :<C-u>set operatorfunc=<SID>cocActionsOpenFromSelected<C
 " files search
 " ====================
 
+nnoremap <silent> <LEADER>fp1 :Files ~/Documents/workProjects/chatlysalescloudh5<CR>
 nnoremap <silent> <LEADER>ff :Files<CR>
 nnoremap <silent> <LEADER>fb :Buffers<CR>
 
@@ -419,7 +425,7 @@ nnoremap <silent> <C-b> :Defx<CR>
 
 call defx#custom#option('_', {
 	\ 'show_ignored_files': 0,
-	\ 'columns': 'icons:indent:filename:type:size',
+	\ 'columns': 'icons:indent:filename:type:size:time',
 	\ })
 	" \ 'winheight': 40,
 	" \ 'winwidth': 60,
