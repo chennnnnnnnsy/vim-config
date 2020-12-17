@@ -194,6 +194,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'gcmt/wildfire.vim' " in Visual mode, type i' to select all text in '', or type k) k] k} kp
 Plug 'tpope/vim-commentary'
 Plug 'mg979/vim-visual-multi'
+Plug 'dyng/ctrlsf.vim' " 全局搜索
 
 " markdown
 Plug 'godlygeek/tabular', { 'for': 'markdown' }
@@ -352,7 +353,6 @@ inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
 			\: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-nnoremap <silent> <LEADER>H :call <SID>show_documentation()<CR>
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -362,6 +362,7 @@ function! s:show_documentation()
     execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
+nnoremap <silent> <LEADER>H :call <SID>show_documentation()<CR>
 
 nmap <silent> <LEADER>- <Plug>(coc-diagnostic-prev)
 nmap <silent> <LEADER>= <Plug>(coc-diagnostic-next)

@@ -48,6 +48,12 @@ brew install node
 
 10. **oh-my-zsh**  + **Iterm2**，自行搜索方法
 
+11. **ag** 是插件 ctrlsf.vim 需要的
+```bash
+brew install the_silver_searcher
+```
+
+
 # 安装
 
 ```bash
