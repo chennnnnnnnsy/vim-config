@@ -139,8 +139,9 @@ call plug#begin('~/.config/nvim/plugged')
 " Plug 'ajmwagar/vim-deus'
 " Plug 'rakr/vim-one'
 " Plug 'karoliskoncevicius/sacredforest-vim'
-Plug 'cocopon/iceberg.vim'
- 
+" Plug 'cocopon/iceberg.vim'
+Plug 'beikome/cosme.vim'
+
 " 光标移动
 Plug 'rhysd/accelerated-jk'
 
@@ -220,7 +221,7 @@ set guifont=Roboto\ Mono\ Medium\ for\ Powerline\ Font:h18
 
 set laststatus=2
 let g:lightline = {
-	\ 'colorscheme': 'iceberg',
+	\ 'colorscheme': 'cosme',
 	\ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
 	\             ['gitbranch'],
@@ -264,12 +265,11 @@ let g:Hexokinase_highlighters = ['virtual']
 set termguicolors " enable true colors support
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
-" colorscheme one
 " set background=dark
 " set t_8b=^[[48;2;%lu;%lu;%lum
 " set t_8f=^[[38;2;%lu;%lu;%lum
-" colorscheme sacredforest
-colorscheme iceberg
+" syntax enable
+colorscheme cosme
 
 " ====================
 " gitgutter + Agit
@@ -378,9 +378,10 @@ nmap <silent> <leader>a :<C-u>set operatorfunc=<SID>cocActionsOpenFromSelected<C
 " files search
 " ====================
 
-nnoremap <silent> <LEADER>fp1 :Files ~/Documents/workProjects/chatlysalescloudh5<CR>
+" nnoremap <silent> <LEADER>fp1 :Files ~/Documents/workProjects/chatlysalescloudh5<CR>
 nnoremap <silent> <LEADER>ff :Files<CR>
 nnoremap <silent> <LEADER>fb :Buffers<CR>
+nnoremap <silent> <LEADER>fg :CtrlSF 
 
 " ====================
 " files tree
