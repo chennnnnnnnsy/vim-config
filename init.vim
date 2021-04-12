@@ -117,6 +117,10 @@ noremap sl :set splitright<CR>:vsplit<CR>
 " 光标所在单词的搜索快捷键
 noremap <LEADER>w *
 
+" 查询下一个和上一个
+noremap n nzz
+noremap N Nzz
+
 " 系统粘贴板
 nmap P "+p
 vmap Y "+y
