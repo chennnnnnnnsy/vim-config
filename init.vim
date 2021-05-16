@@ -144,10 +144,9 @@ call plug#begin('~/.config/nvim/plugged')
 " Plug 'rakr/vim-one'
 " Plug 'karoliskoncevicius/sacredforest-vim'
 " Plug 'cocopon/iceberg.vim'
-Plug 'beikome/cosme.vim'
-
-" 光标移动
-Plug 'rhysd/accelerated-jk'
+" Plug 'beikome/cosme.vim'
+Plug 'morhetz/gruvbox'
+Plug 'tyrannicaltoucan/vim-deep-space'
 
 
 " status line
@@ -168,7 +167,6 @@ Plug 'liuchengxu/vista.vim'
 Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'kristijanhusak/defx-icons'
 
-" code autoformat
 
 " Snippets
 Plug 'honza/vim-snippets'
@@ -189,7 +187,7 @@ Plug 'cohama/agit.vim'
 " 分别是 icons，括号多彩，缩进的虚线，终端集成
 Plug 'ryanoasis/vim-devicons'
 Plug 'luochen1990/rainbow'
-Plug 'wincent/terminus'
+" Plug 'wincent/terminus'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
@@ -200,16 +198,28 @@ Plug 'gcmt/wildfire.vim' " in Visual mode, type i' to select all text in '', or 
 Plug 'tpope/vim-commentary'
 Plug 'mg979/vim-visual-multi'
 Plug 'dyng/ctrlsf.vim' " 全局搜索
+Plug 'Yggdroot/indentLine'
+Plug 'junegunn/vim-easy-align' " https://github.com/junegunn/vim-easy-align
+
+
+" 语法高亮
+Plug 'mtdl9/vim-log-highlighting'
+Plug 'pangloss/vim-javascript'
+Plug 'hail2u/vim-css3-syntax'
+Plug 'posva/vim-vue'
+Plug 'leafgarland/typescript-vim'
+" Plug 'othree/html5.vim'
 
 " markdown
 Plug 'godlygeek/tabular', { 'for': 'markdown' }
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install', 'for': 'markdown'  }
 
-" React
-Plug 'HerringtonDarkholme/yats.vim'
-" or Plug 'leafgarland/typescript-vim'
-Plug 'maxmellon/vim-jsx-pretty'
+
+" 有趣的插件
+Plug 'mhinz/vim-startify'
+Plug 'psliwka/vim-smoothie'
+
 
 call plug#end()
 
@@ -225,7 +235,7 @@ set guifont=Roboto\ Mono\ Medium\ for\ Powerline\ Font:h18
 
 set laststatus=2
 let g:lightline = {
-	\ 'colorscheme': 'cosme',
+	\ 'colorscheme': 'gruvbox',
 	\ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
 	\             ['gitbranch'],
@@ -256,24 +266,22 @@ let g:vista#renderer#enable_icon = 1
 
 noremap <LEADER>va :Vista!!<CR>
 
-" ====================
-" auto format
-" ====================
 
 
 " ====================
-" 颜色显示
+" 颜色显示 / theme
 " ====================
 
 let g:Hexokinase_highlighters = ['virtual']
-set termguicolors " enable true colors support
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-
-" set background=dark
 " set t_8b=^[[48;2;%lu;%lu;%lum
 " set t_8f=^[[38;2;%lu;%lu;%lum
-" syntax enable
-colorscheme cosme
+set termguicolors " enable true colors support
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+set background=dark
+" colorscheme deep-space
+colorscheme gruvbox
+hi! Normal ctermbg=NONE guibg=NONE
+hi! NonText ctermbg=NONE guibg=NONE
 
 " ====================
 " gitgutter + Agit
@@ -301,13 +309,6 @@ nnoremap <silent> <LEADER>ga :Agit<CR>
 let g:Illuminate_delay = 750
 hi illuminatedWord cterm=undercurl gui=undercurl
 
-" ====================
-" 光标移动
-" ====================
-
-nmap j <Plug>(accelerated_jk_gj)
-nmap k <Plug>(accelerated_jk_gk)
-let g:accelerated_jk_acceleration_table = [2, 4, 7, 15]
 
 " ====================
 " which key
@@ -338,7 +339,28 @@ let g:coc_global_extensions = [
 	\ 'coc-vetur',
 	\ 'coc-html']
 
+"解决coc.nvim大文件卡死状况
+let g:trigger_size = 0.5 * 1048576
+
+augroup hugefile
+  autocmd!
+  autocmd BufReadPre *
+        \ let size = getfsize(expand('<afile>')) |
+        \ if (size > g:trigger_size) || (size == -2) |
+        \   echohl WarningMsg | echomsg 'WARNING: altering options for this huge file!' | echohl None |
+        \   exec 'CocDisable' |
+        \ else |
+        \   exec 'CocEnable' |
+        \ endif |
+        \ unlet size
+augroup END
+
+
+" ====================
+" auto format
+" ====================
 " command! -nargs=0 Format :call CocAction('format')
+" command! -nargs=0 Prettier :CocCommand prettier.formatFile
 " nnoremap <silent> \f :Format<CR>
 
 nmap <leader>rn <Plug>(coc-rename)
@@ -382,10 +404,10 @@ nmap <silent> <leader>a :<C-u>set operatorfunc=<SID>cocActionsOpenFromSelected<C
 " files search
 " ====================
 
-" nnoremap <silent> <LEADER>fp1 :Files ~/Documents/workProjects/chatlysalescloudh5<CR>
 nnoremap <silent> <LEADER>ff :Files<CR>
 nnoremap <silent> <LEADER>fb :Buffers<CR>
 nnoremap <silent> <LEADER>fg :CtrlSF 
+nnoremap <silent> <LEADER>fp1 :Files ~/Documents/工作文档/融山/WisdomSalesForPC<CR>
 
 " ====================
 " files tree
@@ -455,5 +477,36 @@ autocmd Filetype markdown inoremap <buffer> ,i ** <++><Esc>F*i
 autocmd Filetype markdown inoremap <buffer> ,c ```<Enter><++><Enter>```<Enter><Esc>3kA
 autocmd FileType markdown inoremap <buffer> ,p ![](<++>) <++><Esc>F[a
 autocmd FileType markdown inoremap <buffer> ,a [](<++>) <++><Esc>F[a
+
+
+" ====================
+" startify
+" ====================
+
+function! s:gitModified()
+    let files = systemlist('git ls-files -m 2>/dev/null')
+    return map(files, "{'line': v:val, 'path': v:val}")
+endfunction
+
+let g:startify_lists = [
+	\ { 'type': 'files',     'header': ['MRU']            },
+	\ { 'type': function('s:gitModified'),  'header': ['git modified']},
+	\ ]
+
+" let g:startify_custom_header = []
+
+" ====================
+" 语法高亮
+" ====================
+let g:vue_pre_processors = []
+let g:javascript_plugin_flow = 1
+let g:typescript_indent_disable = 1 " 用了prettier, 就不用它的缩进了
+
+augroup VimCSS3Syntax
+  autocmd!
+
+  autocmd FileType css setlocal iskeyword+=-
+augroup ENDaugroup VimCSS3Syntax
+
 
 exec "nohlsearch"
